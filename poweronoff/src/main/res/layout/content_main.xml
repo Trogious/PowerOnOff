@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="net.swmud.trog.poweronoff.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <Button
+        android:id="@+id/bWol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Wake on LAN"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="41dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bWol"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/eMac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:allowUndo="true"
+        android:contentDescription="MAC address"
+        android:ems="10"
+        android:hint="MAC address"
+        android:inputType="textCapCharacters|textNoSuggestions|textFilter"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColorLink="@android:color/holo_red_light" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/eMac"
+        android:layout_alignTop="@+id/eMac"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/eMac"
+        app:srcCompat="?android:attr/alertDialogIcon" />
+
+</RelativeLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PowerOnOff.iml" filepath="$PROJECT_DIR$/PowerOnOff.iml" />
+      <module fileurl="file://$PROJECT_DIR$/poweronoff/poweronoff.iml" filepath="$PROJECT_DIR$/poweronoff/poweronoff.iml" />
+    </modules>
+  </component>
+</project>
