@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,50 +8,113 @@
     tools:context="net.swmud.trog.poweronoff.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:id="@+id/bWol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Wake on LAN"
-        tools:layout_editor_absoluteX="134dp"
-        tools:layout_editor_absoluteY="41dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/bWol"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="TextView" />
+        <Button
+            android:id="@+id/bWol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Wake on LAN"
+            tools:layout_editor_absoluteX="134dp"
+            tools:layout_editor_absoluteY="41dp" />
 
-    <EditText
-        android:id="@+id/eMac"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:allowUndo="true"
-        android:contentDescription="MAC address"
-        android:ems="10"
-        android:hint="MAC address"
-        android:inputType="textCapCharacters|textNoSuggestions|textFilter"
-        android:singleLine="true"
-        android:textAlignment="center"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:textColorLink="@android:color/holo_red_light" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bWol"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:text="broadcast" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/eMac"
-        android:layout_alignTop="@+id/eMac"
-        android:layout_marginLeft="10dp"
-        android:layout_toEndOf="@+id/eMac"
-        app:srcCompat="?android:attr/alertDialogIcon" />
+        <EditText
+            android:id="@+id/eMac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:allowUndo="true"
+            android:contentDescription="MAC address"
+            android:ems="10"
+            android:hint="MAC address"
+            android:inputType="textCapCharacters|textNoSuggestions|textFilter"
+            android:singleLine="true"
+            android:text="40:8D:5C:1F:04:DF"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textColorLink="@android:color/holo_red_light" />
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/eIp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/eMac"
+            android:layout_marginTop="40dp"
+            android:layout_toStartOf="@+id/ePort"
+            android:allowUndo="true"
+            android:contentDescription="IP Address"
+            android:hint="IP Address"
+            android:inputType="textCapCharacters|textNoSuggestions|textFilter"
+            android:singleLine="true"
+            android:text="192.168.44.2"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textColorLink="@android:color/holo_red_light" />
+
+        <EditText
+            android:id="@+id/ePort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sTime"
+            android:layout_alignParentEnd="true"
+            android:allowUndo="true"
+            android:contentDescription="Port"
+            android:hint="Port"
+            android:inputType="numberDecimal"
+            android:minWidth="100dp"
+            android:singleLine="true"
+            android:text="13013"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textColorLink="@android:color/holo_red_light" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/eMac"
+            android:layout_alignTop="@+id/eMac"
+            android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@+id/eMac"
+            app:srcCompat="?android:attr/alertDialogIcon" />
+
+        <Button
+            android:id="@+id/bPoweroff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sTime"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="40dp"
+            android:text="Poweroff" />
+
+        <Spinner
+            android:id="@+id/sTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eIp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:entries="@array/minutes"
+            android:minWidth="100dp"
+            android:textAlignment="center" />
+
+    </RelativeLayout>
+</ScrollView>
