@@ -8,19 +8,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import net.swmud.trog.core.BackgroundExecutor;
+import net.swmud.trog.core.Settings;
 import net.swmud.trog.json.JsonResponse;
 import net.swmud.trog.json.JsonRpc;
 import net.swmud.trog.json.PoweroffRequest;
@@ -34,6 +35,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int DEFAULT_PORT = 13013;
+    private static final int DEFAULT_TIME = 5;
     private final MainActivity self = this;
     private final ResponseRouter responseRouter = new ResponseRouter();
     private final BackgroundExecutor backgroundExecutor = new BackgroundExecutor();
@@ -41,12 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private TcpClient tcpClient;
     private View snackView;
     private List<String> pendingRequests = new LinkedList<>();
+    private Settings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         snackView = findViewById(R.id.textView);
+        loadSettings();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final TextView eMac = (TextView) findViewById(R.id.eMac);
+        TextView eMac = (TextView) findViewById(R.id.eMac);
         final ImageView iMacValid = (ImageView) findViewById(R.id.imageView);
         setAlertVisibility(iMacValid, eMac.getText().toString());
         eMac.addTextChangedListener(new TextWatcher() {
@@ -89,11 +93,12 @@ public class MainActivity extends AppCompatActivity {
         bWol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                saveSettings();
                 new Thread() {
                     @Override
                     public void run() {
                         try {
-                            Utils.sendMagicPacket(broadcast, eMac.getText().toString());
+                            Utils.sendMagicPacket(broadcast, settings.getMac());
                             self.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -113,25 +118,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Spinner sTime = (Spinner) findViewById(R.id.sTime);
-        sTime.setSelection(1);
         final Button bPoweroff = (Button) findViewById(R.id.bPoweroff);
         bPoweroff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saveSettings();
                 backgroundExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        int time = 5;
-                        try {
-                            time = Integer.parseInt((String)sTime.getSelectedItem());
-                        } catch (NumberFormatException e) {
-                        }
-                        JsonRpc.JsonRequest request = new PoweroffRequest().getJsonRpcRequest(time);
+                        JsonRpc.JsonRequest request = new PoweroffRequest().getJsonRpcRequest(settings.getTime());
                         synchronized (pendingRequests) {
                             pendingRequests.add(request.toString());
                         }
-                        startTcpClient();
+                        startTcpClient(settings.getHost(), settings.getPort());
                     }
                 });
             }
@@ -139,20 +138,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startTcpClient() {
+    private void startTcpClient(String host, int port) {
         if (tcpClient != null) {
             tcpClient.finish();
             tcpClient = null;
         }
         if (tcpClient == null || !tcpClient.isRunning()) {
-            final TextView eIp = (TextView) findViewById(R.id.eIp);
-            final TextView ePort = (TextView) findViewById(R.id.ePort);
-            int port = DEFAULT_PORT;
-            try {
-                port = Integer.parseInt(ePort.getText().toString());
-            } catch (NumberFormatException e) {
-            }
-            tcpClient = new TcpClient(eIp.getText().toString(), port, false, null,
+            tcpClient = new TcpClient(host, port, false, null,
                     new TcpClient.Listener<String>() {
                         @Override
                         public void onMessage(final String msg) {
@@ -169,13 +161,22 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             if (response != null) {
-                                final PoweroffResponse poffResponse = new Gson().fromJson(msg, PoweroffResponse.class);
-                                self.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Snackbar.make(snackView, poffResponse.result.message, Snackbar.LENGTH_LONG).show();
-                                    }
-                                });
+                                try {
+                                    final PoweroffResponse poffResponse = new Gson().fromJson(msg, PoweroffResponse.class);
+                                    self.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Snackbar.make(snackView, poffResponse.result.message, Snackbar.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } catch (final JsonSyntaxException e) {
+                                    self.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Snackbar.make(snackView, getString(R.string.parsing_jsonrpc_response_failed, e.getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
                             }
                         }
                     },
@@ -204,8 +205,49 @@ public class MainActivity extends AppCompatActivity {
             backgroundExecutor.execute(tcpClient);
         }
     }
+
     private void setAlertVisibility(final ImageView alertImage, final String mac) {
         alertImage.setVisibility(mac.length() == 0 || Utils.isMacValid(mac) ? View.GONE : View.VISIBLE);
+    }
+
+    private void saveSettings() {
+        TextView eMac = (TextView) findViewById(R.id.eMac);
+        TextView eIp = (TextView) findViewById(R.id.eIp);
+        TextView ePort = (TextView) findViewById(R.id.ePort);
+        Spinner sTime = (Spinner) findViewById(R.id.sTime);
+        int port = DEFAULT_PORT;
+        try {
+            port = Integer.parseInt(ePort.getText().toString());
+        } catch (NumberFormatException e) {
+        }
+        int time = DEFAULT_TIME;
+        try {
+            time = Integer.parseInt((String) sTime.getSelectedItem());
+        } catch (NumberFormatException e) {
+        }
+
+        settings.set(eMac.getText().toString(), eIp.getText().toString(), port, "", true, "", time).save(getApplicationContext());
+    }
+
+    private void loadSettings() {
+        TextView eMac = (TextView) findViewById(R.id.eMac);
+        TextView eIp = (TextView) findViewById(R.id.eIp);
+        TextView ePort = (TextView) findViewById(R.id.ePort);
+        Spinner sTime = (Spinner) findViewById(R.id.sTime);
+        settings = Settings.loadSettings(getApplicationContext());
+        eMac.setText(settings.getMac());
+        eIp.setText(settings.getHost());
+        ePort.setText("" + settings.getPort());
+        sTime.setSelection(1);
+        SpinnerAdapter adapter = sTime.getAdapter();
+        int count = adapter.getCount();
+        String item = "" + settings.getTime();
+        for (int i = 0; i < count; ++i) {
+            if (item.equals(adapter.getItem(i))) {
+                sTime.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override
