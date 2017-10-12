@@ -55,19 +55,27 @@ def get_json_response_poweroff_ok(message, request_id):
 def execute_poweroff(time_int):
     if 'linux' == POOFF_CURRENT_OS:
         if time_int < 1:
-            Runner([['/sbin/poweroff']]).start()
+            Runner([['/sbin/shutdown', '-c'], ['/sbin/poweroff']]).start()
         else:
-            Runner([['/sbin/shutdown', '-h', '-P', str(time_int)]]).start()
+            Runner([['/sbin/shutdown', '-c'], ['/sbin/shutdown', '-h', '-P', str(time_int)]]).start()
     elif 'darwin' == POOFF_CURRENT_OS:
         if time_int < 1:
-            Runner([['/sbin/shutdown', '-h', 'now']]).start()
+            Runner([['pkill', 'shutdown'], ['/sbin/shutdown', '-h', 'now']]).start()
         else:
             Runner([['pkill', 'shutdown'], ['/sbin/shutdown', '-h', '+' + str(time_int)]]).start()
     elif 'windows' == POOFF_CURRENT_OS:
         if time_int < 1:
-            Runner([['shutdown', '/f', '/s', 'now']]).start()
+            Runner([['shutdown', '/a'], ['shutdown', '/f', '/s', 'now']]).start()
         else:
             Runner([['shutdown', '/a'], ['shutdown', '/f', '/s', str(time_int)]]).start()
+
+
+def get_json_response_restart_minidlna_ok(message, request_id):
+    return get_json_response({'msg': message}, request_id)
+
+
+def execute_restart_minidlna():
+    Runner([['/etc/init.d/minidlna_restart']]).start()
 
 
 def prepare_response(response_json):
@@ -101,6 +109,10 @@ def process_request(data):
                     response_json = get_json_response_poweroff_ok('shutting down in: ' + str(time_int), req['id'])
                     fullContent = prepare_response(response_json)
                     execute_poweroff(time_int)
+        elif 'reminidlna' == method:
+            response_json = get_json_response_restart_minidlna_ok('restarting minidlna', req['id'])
+            fullContent = prepare_response(response_json)
+            execute_restart_minidlna()
         elif 'x' == method:
             pass
     return fullContent

@@ -101,7 +101,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/sTime"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="40dp"
             android:layout_marginTop="40dp"
             android:text="Poweroff" />
 
@@ -115,6 +114,16 @@
             android:entries="@array/minutes"
             android:minWidth="100dp"
             android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/bReMinidlna"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bPoweroff"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="40dp"
+            android:text="Restart Minidlna" />
 
     </RelativeLayout>
 </ScrollView>

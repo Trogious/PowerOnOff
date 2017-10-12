@@ -26,6 +26,7 @@ import net.swmud.trog.json.JsonResponse;
 import net.swmud.trog.json.JsonRpc;
 import net.swmud.trog.json.PoweroffRequest;
 import net.swmud.trog.json.PoweroffResponse;
+import net.swmud.trog.json.ReMinidlnaRequest;
 import net.swmud.trog.net.TcpClient;
 
 import java.io.IOException;
@@ -136,6 +137,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final Button bReMinidlna = (Button) findViewById(R.id.bReMinidlna);
+        bReMinidlna.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveSettings();
+                backgroundExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        JsonRpc.JsonRequest request = new ReMinidlnaRequest().getJsonRpcRequest();
+                        synchronized (pendingRequests) {
+                            pendingRequests.add(request.toString());
+                        }
+                        startTcpClient(settings.getHost(), settings.getPort());
+                    }
+                });
+            }
+        });
     }
 
     private void startTcpClient(String host, int port) {
