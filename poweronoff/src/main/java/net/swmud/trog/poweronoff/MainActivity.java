@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         final Button bPoweroff = (Button) findViewById(R.id.bPoweroff);
+        final TextView requestView = (TextView) findViewById(R.id.requestView);
         bPoweroff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,8 +129,14 @@ public class MainActivity extends AppCompatActivity {
                 backgroundExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        JsonRpc.JsonRequest request = new PoweroffRequest().getJsonRpcRequest(settings.getTime());
+                        final JsonRpc.JsonRequest request = new PoweroffRequest().getJsonRpcRequest(settings.getTime());
                         synchronized (pendingRequests) {
+                            self.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestView.setText(request.toString());
+                                }
+                            });
                             pendingRequests.add(request.toString());
                         }
                         startTcpClient(settings.getHost(), settings.getPort());

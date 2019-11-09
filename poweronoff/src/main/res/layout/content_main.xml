@@ -125,5 +125,15 @@
             android:layout_marginTop="40dp"
             android:text="Restart Minidlna" />
 
+        <TextView
+            android:id="@+id/requestView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bReMinidlna"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:text="." />
+
     </RelativeLayout>
 </ScrollView>
