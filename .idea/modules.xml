@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PowerOnOff.iml" filepath="$PROJECT_DIR$/PowerOnOff.iml" />
-      <module fileurl="file://$PROJECT_DIR$/poweronoff/poweronoff.iml" filepath="$PROJECT_DIR$/poweronoff/poweronoff.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PowerOnOff.iml" filepath="$PROJECT_DIR$/PowerOnOff.iml" group="PowerOnOff" />
+      <module fileurl="file://$PROJECT_DIR$/poweronoff/poweronoff.iml" filepath="$PROJECT_DIR$/poweronoff/poweronoff.iml" group="PowerOnOff/poweronoff" />
     </modules>
   </component>
 </project>

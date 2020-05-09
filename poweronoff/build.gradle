@@ -5,12 +5,12 @@ android {
         config {
             keyAlias 'key0'
             keyPassword 'storepass1'
-            storeFile file('/Users/welmantw/AndroidStudioProjects/PowerOnOff/apksign.jks')
+            storeFile file('/root/AndroidStudioProjects/PowerOnOff/apksign.jks')
             storePassword 'storepass1'
         }
     }
     compileSdkVersion 26
-    buildToolsVersion "28.0.3"
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "net.swmud.trog.poweronoff"
         minSdkVersion 18
@@ -37,5 +37,5 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
 }
