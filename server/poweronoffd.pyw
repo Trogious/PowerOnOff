@@ -127,7 +127,7 @@ def execute_poweroff(time_int):
         if time_int < 1:
             Runner([['/sbin/shutdown', '-c'], ['/sbin/poweroff']]).start()
         else:
-            Runner([['/sbin/shutdown', '-c'], ['/sbin/shutdownx', '-h', '-P', str(time_int)]]).start()
+            Runner([['/sbin/shutdown', '-c'], ['/sbin/shutdown', '-h', '-P', str(time_int)]]).start()
     elif 'darwin' == POOFF_CURRENT_OS:
         if time_int < 1:
             Runner([['pkill', 'shutdown'], ['/sbin/shutdown', '-h', 'now']]).start()
