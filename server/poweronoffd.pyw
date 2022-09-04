@@ -199,9 +199,13 @@ def run():
         info('accepted: ' + str(address))
         try:
             ssl_client = ssl.wrap_socket(client, server_side=True, certfile=POOFF_CERT_FILE, keyfile=POOFF_CERT_KEY,
-                                         ssl_version=ssl.PROTOCOL_TLSv1_2, cert_reqs=ssl.CERT_OPTIONAL, ca_certs=POOFF_CA_FILE)
+                                         ssl_version=ssl.PROTOCOL_TLSv1_2, cert_reqs=ssl.CERT_REQUIRED, ca_certs=POOFF_CA_FILE)
         except ssl.SSLError as e:
             error('no client cert: ' + e.strerror)
+            client.close()
+            continue
+        except OSError as e:
+            error('os error: ' + e.strerror)
             client.close()
             continue
         except ConnectionResetError as e:
@@ -210,12 +214,21 @@ def run():
             continue
         client = None
         data = ssl_client.recv(POOFF_RECV_SIZE)
-        while data is not None and len(data) > 0:
+        data_len = len(data)
+        if data_len == 1 and data == b' ':
+            data = None
+        while data is not None and data_len > 0:
             response = process_request(data)
             if response is not None:
                 info(response)
                 ssl_client.sendall(response.encode('utf8'))
+                break
             data = ssl_client.recv(POOFF_RECV_SIZE)
+            data_len = len(data)
+            if data_len == 1 and data == b' ':
+                data = None
+        ssl_client.close()
+        info('done with client: ' + str(address))
 
 
 run()

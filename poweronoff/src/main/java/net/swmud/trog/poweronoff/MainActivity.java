@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             tcpClient = null;
         }
         if (tcpClient == null || !tcpClient.isRunning()) {
-            tcpClient = new TcpClient(host, port, false, null,
+            tcpClient = new TcpClient(host, port, false, getExternalFilesDir(null).getAbsolutePath(),
                     new TcpClient.Listener<String>() {
                         @Override
                         public void onMessage(final String msg) {
